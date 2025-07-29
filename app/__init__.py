@@ -5,40 +5,43 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 import os
 
+# Extensions
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
 
-
 def create_app():
     app = Flask(__name__)
 
-    
+
+    app.url_map.strict_slashes = False
+
+    # Load configuration
     app.config.from_object("config.Config")
 
-
+    # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
 
-    # CORS(app)
-    
+    # Enable CORS
     if os.getenv("FLASK_ENV") == "production":
-        
         CORS(
             app,
             resources={r"/api/*": {"origins": ["https://your-production-domain.com"]}},
-            supports_credentials=True
+            supports_credentials=True,
+            allow_headers=["Content-Type", "Authorization"]
         )
     else:
-        
+        # Allow localhost frontend during development
         CORS(
             app,
-            resources={r"/api/*": {"origins": "*"}},
-            supports_credentials=True
+            resources={r"/api/*": {"origins": ["http://localhost:3000"]}},
+            supports_credentials=True,
+            allow_headers=["Content-Type", "Authorization"]
         )
 
-    
+    # JWT error handlers
     @jwt.unauthorized_loader
     def unauthorized(reason):
         return jsonify({"message": f"Unauthorized: {reason}"}), 401
@@ -51,7 +54,7 @@ def create_app():
     def expired_token(jwt_header, jwt_payload):
         return jsonify({"message": "Token expired"}), 401
 
-    # register blueprints
+    # Register blueprints
     from app.routes import auth, buses, bookings, profile
 
     app.register_blueprint(auth.bp, url_prefix="/api/auth")
@@ -59,9 +62,15 @@ def create_app():
     app.register_blueprint(bookings.bp, url_prefix="/api/bookings")
     app.register_blueprint(profile.bp, url_prefix="/api/profile")
 
-    
+    # Default route
     @app.route("/")
     def index():
         return jsonify({"message": "Bus Booking API is running"})
+    
+
+    @app.errorhandler(500)
+    def internal_error(error):
+         return jsonify({"message": "Internal server error", "details": str(error)}), 500
+
 
     return app

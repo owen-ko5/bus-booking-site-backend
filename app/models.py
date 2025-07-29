@@ -22,17 +22,16 @@ class Bus(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     route = db.Column(db.String(200), nullable=False)
-    seats = db.Column(db.Integer, nullable=False)         #
-    price = db.Column(db.Integer, nullable=False)         
+    seats = db.Column(db.Integer, nullable=False)         # stored as "seats" in DB
+    price = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String(300), nullable=True)
 
-    
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
             "route": self.route,
-            "availableSeats": self.seats,
+            "seats": self.seats,  # exposed as availableSeats to frontend
             "price": self.price,
             "image_url": self.image_url
         }
@@ -44,7 +43,7 @@ class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     bus_id = db.Column(db.Integer, db.ForeignKey("buses.id"), nullable=False)
-    seats = db.Column(db.Integer, nullable=False)     # seats booked
+    seats = db.Column(db.Integer, nullable=False)  # number of seats booked
 
     user = db.relationship("User", backref="bookings")
     bus = db.relationship("Bus", backref="bookings")

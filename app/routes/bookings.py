@@ -6,6 +6,8 @@ from flask_cors import cross_origin
 
 bp = Blueprint("bookings", __name__, url_prefix="/api/bookings")
 
+
+@bp.route("", methods=["POST", "OPTIONS"]) 
 @bp.route("/", methods=["POST", "OPTIONS"])
 @cross_origin()  # this allows CORS just for this route
 @jwt_required()
@@ -58,11 +60,11 @@ def get_my_bookings():
     results = []
     for b in bookings:
         results.append({
-            "booking_id": b.id,
-            "bus_id": b.bus.id,
+            
             "bus_name": b.bus.name,
             "route": b.bus.route,
             "seats_booked": b.seats,
+            "total_price": b.seats * b.bus.price,
             "image_url": b.bus.image_url
         })
 
