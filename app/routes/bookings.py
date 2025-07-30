@@ -9,11 +9,11 @@ bp = Blueprint("bookings", __name__, url_prefix="/api/bookings")
 
 @bp.route("", methods=["POST", "OPTIONS"]) 
 @bp.route("/", methods=["POST", "OPTIONS"])
-@cross_origin()  # this allows CORS just for this route
+@cross_origin()  
 @jwt_required()
 def book_bus():
     if request.method == "OPTIONS":
-        # Preflight request — just return OK
+        
         return '', 200
 
     user_id = get_jwt_identity()

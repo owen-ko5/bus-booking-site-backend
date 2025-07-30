@@ -23,5 +23,7 @@ def get_profile():
     return jsonify({
         "id": user.id,
         "email": user.email,
+        "username": user.username,  # New
+        "profile_picture": user.profile_picture,  # New
         "bookings": booking_data
     })

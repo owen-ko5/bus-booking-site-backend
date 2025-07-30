@@ -12,6 +12,7 @@ def list_buses():
             "name": b.name,
             "route": b.route,
             "seats": b.seats,
+            "price": b.price, 
             "image_url": b.image_url
         } for b in buses
     ])

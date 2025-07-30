@@ -33,7 +33,7 @@ def create_app():
             allow_headers=["Content-Type", "Authorization"]
         )
     else:
-        # Allow localhost frontend during development
+        
         CORS(
             app,
             resources={r"/api/*": {"origins": ["http://localhost:3000"]}},
@@ -41,7 +41,7 @@ def create_app():
             allow_headers=["Content-Type", "Authorization"]
         )
 
-    # JWT error handlers
+    
     @jwt.unauthorized_loader
     def unauthorized(reason):
         return jsonify({"message": f"Unauthorized: {reason}"}), 401
@@ -54,7 +54,7 @@ def create_app():
     def expired_token(jwt_header, jwt_payload):
         return jsonify({"message": "Token expired"}), 401
 
-    # Register blueprints
+    
     from app.routes import auth, buses, bookings, profile
 
     app.register_blueprint(auth.bp, url_prefix="/api/auth")
@@ -71,6 +71,7 @@ def create_app():
     @app.errorhandler(500)
     def internal_error(error):
          return jsonify({"message": "Internal server error", "details": str(error)}), 500
+    
 
 
     return app

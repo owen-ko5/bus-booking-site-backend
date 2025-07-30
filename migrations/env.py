@@ -5,12 +5,10 @@ from flask import current_app
 
 from alembic import context
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+
 config = context.config
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
+
 fileConfig(config.config_file_name)
 logger = logging.getLogger('alembic.env')
 
@@ -73,9 +71,7 @@ def run_migrations_online():
 
     """
 
-    # this callback is used to prevent an auto-migration from being generated
-    # when there are no changes to the schema
-    # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
+    
     def process_revision_directives(context, revision, directives):
         if getattr(config.cmd_opts, 'autogenerate', False):
             script = directives[0]
